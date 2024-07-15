@@ -27,7 +27,53 @@ function gameBoard() {
             board[i].push('');
         }
     }
+
     console.log(board);
+    return board;
 }
-gameBoard();
-console.log(gameBoard());
+let board = gameBoard();
+//console.log(board);
+
+
+const player1 = "X";
+const player2 = "O";
+
+function playerTurn(player) {
+
+    let position = prompt("Where do you place your X ? Format: row,col")
+    let row = position.split(",")[0]
+    let col = position.split(",")[1]
+    console.log(row, col);
+    
+    return [row, col, lastPlayer]
+}
+let [row, col, player] = playerTurn(lastPlayer);
+// update board
+
+function updateBoard(row, col, player, board) {
+    console.log(player);
+    board[row-1][col-1] = player;
+    return board;
+}
+board = updateBoard(row, col, player, board)
+
+console.log(board);
+
+function getWin(board) {
+    // check rows, columns, diagonals for 3
+    let play1 = "X";
+    let play2 = "O";
+    for (let i = 0; i < 3; i++) {
+        if (board[i].every(cell => cell === play1)) {
+            return play1    
+        }
+        if (board[i].every(cell => cell === play2)) {
+            return play2
+        }
+    // columns
+        
+        
+    }
+}
+// create function to check if a player has won
+// get board array
