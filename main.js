@@ -6,17 +6,13 @@ You should be checking for all winning 3-in-a-rows and ties.
 Try to avoid thinking about the DOM and your HTML/CSS until your game is working.
 
 - Create a game board
-
 - write a function that allows players to take turns
 - write a function that switches between players and keeps track of whose turn it is
 - write a game check function that checks for a win or a tie
 - write a function that resets the game
-
-
 */
-
 // create a game board
-function gameBoard() {
+function createGameBoard() {
     const rows = 3;
     const cols = 3;
     const board = [];
@@ -27,20 +23,13 @@ function gameBoard() {
             board[i].push('');
         }
     }
-
-    console.log(board);
     return board;
 }
 
-
 function playerTurn(player) {
-
-    let position = prompt("Player " + player + ": Where do you place your X ? Format: row,col")
-    let row = position.split(",")[0]
-    let col = position.split(",")[1]
-    console.log(row, col, player);
-
-    return [row, col, player]
+    let position = prompt(`Player ${player}: Where do you place your ${player}? Format: row,col`);
+    let [row, col] = position.split(',').map(Number);
+    return [row, col, player];
 }
 
 function updateBoard(row, col, player, board) {
@@ -48,7 +37,6 @@ function updateBoard(row, col, player, board) {
     board[row - 1][col - 1] = player;
     return board;
 }
-
 
 function checkWin(board) {
     // check rows, columns, diagonals for 3
@@ -85,73 +73,58 @@ function checkWin(board) {
 }
 
 function checkDraw(board) {
-    if (board.every(row => row.every(cell => cell != ""))) {
-        return true
-    };
-    return false
+    return board.every(row => row.every(cell => cell !== ""))
 }
-
-/* let board = gameBoard();
-//console.log(board);
-
-
-const player1 = "X";
-const player2 = "O";
-
-let [row, col, player] = playerTurn(player1);
-// update board
-
-board = updateBoard(row, col, player, board)
-
-console.log(board);
-console.log(checkWin(board));
-let draw = checkDraw(board);
-console.log(draw); */
-// create function to check if a player has won
-// get board array
-
 
 function playGame() {
     console.log("Let's play Tic Tac Toe");
-    let board = gameBoard();
+    let board = createGameBoard();
     const player1 = "X";
     const player2 = "O";
     let placedCrosses = [];
     /*     if (typeof nextPlayer === "undefined") {
             let nextPlayer = player1;
         } */
-    let nextPlayer = player1;
+    let currentPlayer = player1;
     let drawResult = checkDraw(board);
     let winResult = checkWin(board);
-    while (drawResult === false && winResult == false) {
-        let [row, col, lastPlayer] = playerTurn(nextPlayer);
 
-        board = updateBoard(row, col, lastPlayer, board)
-        if (lastPlayer == player1) {
-            nextPlayer = player2
-        } else {
-            nextPlayer = player1
-        };
-        console.log("last palyer: " + lastPlayer + " next player: " + nextPlayer);
-        drawResult = checkDraw(board);
-        winResult = checkWin(board);
+    while (true) {
+        console.log(`Current board:`);
+        console.log(board.map(row => row.join('|')).join('\n---------\n'));
+        let [row, col] = playerTurn(currentPlayer);
+        if (board[row - 1][col - 1] !== '') {
+            console.log("This cell is already occupied. Please choose another one.");
+            continue;
+        }
+
+        board = updateBoard(row, col, currentPlayer, board)
+        /*         if (lastPlayer == player1) {
+                    nextPlayer = player2
+                } else {
+                    nextPlayer = player1
+                }; */
+        console.log("last palyer: " + currentPlayer);
+        /*         drawResult = 
+                winResult =  */
         console.log(board);
+        if (checkDraw(board)) {
+            console.log("The Game ended in a Draw!");
+            break;
+        };
+        if (checkWin(board)) {
+            console.log("Player " + winResult + " has won, congrats");
+            break;
+        };
+        currentPlayer = currentPlayer === player1 ? player2 : player1;
 
     };
-    if (drawResult == true) {
-        console.log("The Game ended in a Draw!")
-    };
-    if (winResult !== false) {
-        console.log("Player " + winResult + " has won, congrats")
-    };
-
 
 }
-
 playGame();
 // p1 starts - update board - save last player - check for win/draw
 // win or draw: stop
 // look for result
 // if draw: print: draw
 // if win: print winner
-// ask to play again: start game again
+// later: ask to play again: start game again
