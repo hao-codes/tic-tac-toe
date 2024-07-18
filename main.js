@@ -13,14 +13,13 @@ Try to avoid thinking about the DOM and your HTML/CSS until your game is working
 */
 // create a game board
 function createGameBoard() {
-    const rows = 3;
-    const cols = 3;
+    const boardSize = 3;
     const board = [];
     // create a 3x3 board in a 2D array
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < boardSize; i++) {
         board.push([]);
-        for (let j = 0; j < cols; j++) {
-            board[i].push('');
+        for (let j = 0; j < boardSize; j++) {
+            board[i].push(' ');
         }
     }
     return board;
@@ -42,38 +41,28 @@ function checkWin(board) {
     // check rows, columns, diagonals for 3
     let play1 = "X";
     let play2 = "O";
-    for (let i = 0; i < 3; i++) {
-        if (board[i].every(cell => cell === play1)) {
-            return play1
-        }
-        if (board.every(row => row[i] === play1)) {
-            return play1
-        }
+    const players = ["X", "O"];
+    for (let player of players) {
 
-        if (board[i].every(cell => cell === play2)) {
-            return play2
+        for (let i = 0; i < 3; i++) {
+            if (board[i].every(cell => cell === player)) {
+                return player
+            }
+            if (board.every(row => row[i] === player)) {
+                return player
+            }
+            // Check diagonals
+            if ((board[0][0] === player && board[1][1] === player && board[2][2] === player) ||
+                (board[0][2] === player && board[1][1] === player && board[2][0] === player)) {
+                return player;
+            }
         }
-        if (board.every(row => row[i] === play2)) {
-            return play2
-        }
-        // columns
     }
-    // Check diagonals
-    if ((board[0][0] === play1 && board[1][1] === play1 && board[2][2] === play1) ||
-        (board[0][2] === play1 && board[1][1] === play1 && board[2][0] === play1)) {
-        return play1;
-    }
-
-    if ((board[0][0] === play2 && board[1][1] === play2 && board[2][2] === play2) ||
-        (board[0][2] === play2 && board[1][1] === play2 && board[2][0] === play2)) {
-        return play2;
-    }
-
     return false;
 }
 
 function checkDraw(board) {
-    return board.every(row => row.every(cell => cell !== ""))
+    return board.every(row => row.every(cell => cell !== " "))
 }
 
 function playGame() {
@@ -81,50 +70,35 @@ function playGame() {
     let board = createGameBoard();
     const player1 = "X";
     const player2 = "O";
-    let placedCrosses = [];
-    /*     if (typeof nextPlayer === "undefined") {
-            let nextPlayer = player1;
-        } */
-    let currentPlayer = player1;
-    let drawResult = checkDraw(board);
-    let winResult = checkWin(board);
 
+    let currentPlayer = player1;
     while (true) {
         console.log(`Current board:`);
-        console.log(board.map(row => row.join('|')).join('\n---------\n'));
+        console.log(board.map(row => row.join('|')).join('\n------\n'));
         let [row, col] = playerTurn(currentPlayer);
-        if (board[row - 1][col - 1] !== '') {
+        if ((row < 1 || row > 3) || (col < 1 || col > 3)) {
+            console.log("Invalid field, please enter a valid field")
+            continue;
+        } else if (board[row - 1][col - 1] !== ' ') {
             console.log("This cell is already occupied. Please choose another one.");
             continue;
         }
 
         board = updateBoard(row, col, currentPlayer, board)
-        /*         if (lastPlayer == player1) {
-                    nextPlayer = player2
-                } else {
-                    nextPlayer = player1
-                }; */
-        console.log("last palyer: " + currentPlayer);
-        /*         drawResult = 
-                winResult =  */
-        console.log(board);
+
+        console.log("last player: " + currentPlayer);
         if (checkDraw(board)) {
             console.log("The Game ended in a Draw!");
+            console.log(board.map(row => row.join('|')).join('\n------\n'));
             break;
         };
-        if (checkWin(board)) {
-            console.log("Player " + winResult + " has won, congrats");
+        const winner = checkWin(board);
+        if (winner) {
+            console.log(`Player ${winner} has won, congrats`);
+            console.log(board.map(row => row.join('|')).join('\n------\n'));
             break;
         };
         currentPlayer = currentPlayer === player1 ? player2 : player1;
-
     };
-
 }
 playGame();
-// p1 starts - update board - save last player - check for win/draw
-// win or draw: stop
-// look for result
-// if draw: print: draw
-// if win: print winner
-// later: ask to play again: start game again
