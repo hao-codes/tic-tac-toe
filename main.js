@@ -96,6 +96,7 @@
 const GameBoard = (function () {
     // create board
     const board = [];
+    board.length = 0;
     const boardSize = 3;
     function createBoard() {
         for (let i = 0; i < boardSize; i++) {
@@ -106,7 +107,9 @@ const GameBoard = (function () {
     function updateBoard(row, col, player) {
         if (board[row][col] === ' ') {
             board[row][col] = player;
+            return true;
         }
+        return false;
     }
 
     function displayBoard() {
@@ -147,13 +150,12 @@ const GameBoard = (function () {
 // Factory functions are used to create multiple instances of similar objects
 // use arrow function for better readability
 const Player = (number, symbol) => {
-    const getNumber = () => number;
+    const getName = () => number;
     const getSymbol = () => symbol;
 
-    const makeMove = (row, col, board) => {
-        return board.updateBoard(row, col, symbol);
+    const makeMove = (row, col) => {
+        return GameBoard.updateBoard(row, col, symbol);
     }
-
     // return player object
     return { getName, getSymbol, makeMove };
 }
@@ -162,29 +164,64 @@ const Player = (number, symbol) => {
 
 const GameController = (function () {
     let players = [];
-    let currentPlayer = 0;
+    let currentPlayerIndex = 0;
     function startGame() {
-        
-        players = [Palyer("Player 1", "X"), Player("Player 2", "O")];
+
+        players = [Player("Player 1", "X"), Player("Player 2", "O")];
         GameBoard.createBoard();
         playRound();
     }
     function switchTurn() {
-        currentPlayer = (currentPlayer + 1) % 2;
+        currentPlayerIndex = (currentPlayerIndex + 1) % 2;
     }
     function madeTurn() {
+        const currentPlayer = players[currentPlayerIndex];
+        let moveCorrect = false;
+        while (!moveCorrect) {
+            const position = prompt(`${currentPlayer.getName()}: Where do you place your ${currentPlayer.getSymbol()}? Format: row,col`);
+            const [row, col] = position.split(',').map(Number);
 
+
+            if (row >= 0 && row < 3 && col >= 0 && col < 3) {
+                moveCorrect = currentPlayer.makeMove(row, col, GameBoard);
+                if (!moveCorrect) {
+                    console.log("This cell is already occupied, please choose a empty cell.")
+
+                }
+            } else {
+                console.log("Invalid move. Please enter values between 0 and 2.")
+            }
+        }
     }
-
-    function playRound() {
-
-    }
-
     function checkGameOver() {
+        const winner = GameBoard.checkWin();
+        if (winner) {
+            console.log(`Player ${players.find(player => player.getSymbol() === winner).getName()} wins!`);
+            GameBoard.displayBoard();
+            return true;
+        }
+        if (GameBoard.checkDraw()) {
+            GameBoard.displayBoard();
+            console.log("The game ended in a draw!")
+            return true;
+        }
 
+        return false;
     }
-}
-)
+    function playRound() {
+        while (true) {
+            GameBoard.displayBoard();
+            madeTurn();
+            if (checkGameOver()) break;
+            switchTurn();
+        }
+    }
+
+    return {
+        startGame
+    };
+})();
+
 
 // Start the game
 GameController.startGame();
