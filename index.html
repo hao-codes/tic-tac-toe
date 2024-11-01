@@ -12,11 +12,21 @@
 </head>
 
 <body>
-    <h1>Tic Tac Toe</h1>
-    <script src="main.js" async defer></script>
+    <div class="header">
+        <h1>Tic Tac Toe</h1>
+    </div>
+    <div class="main">
+        <form>
+            <label for="playerOne">Player 1 Name:</label><input type="text" id="playerOne" name="playerOne"> <br>
+            <label for="playerTwo">Player 2 Name:</label><input type="text" id="playerTwo" name="playerTwo"> <br>
+            <input type="submit" value="Start Game">
+        </form>
+        <button>New Game</button>
 
-    <--
-<!-- TODO:
+    </div>
+
+
+    <!-- TODO:
  improve interface
  add function to display game 
  write function to let players set a mark by clicking

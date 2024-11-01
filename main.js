@@ -4,6 +4,7 @@ const GameBoard = (function () {
     const board = [];
     board.length = 0;
     const boardSize = 3;
+    
     function createBoard() {
         for (let i = 0; i < boardSize; i++) {
             board.push([' ', ' ', ' ']);
