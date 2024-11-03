@@ -4,7 +4,7 @@ const GameBoard = (function () {
     const board = [];
     board.length = 0;
     const boardSize = 3;
-    
+
     function createBoard() {
         for (let i = 0; i < boardSize; i++) {
             board.push([' ', ' ', ' ']);
@@ -72,6 +72,8 @@ const Player = (number, symbol) => {
 const GameController = (function () {
     let players = [];
     let currentPlayerIndex = 0;
+
+    
     function startGame() {
 
         players = [Player("Player 1", "X"), Player("Player 2", "O")];
@@ -130,8 +132,70 @@ const GameController = (function () {
 })();
 
 
+
+
+const gameBoard = [
+    ["A", "A", "A"],
+    ["A", "A", "A"],
+    ["A", "A", "A"]
+];
+let currentPlayer = "X";
+const info = document.querySelector(".info");
+
+function renderGame() {
+    const game = document.querySelector(".game")
+    game.innerHTML = "";
+
+    for (let i = 0; i < 3; i++) {
+        let row = document.createElement("div");
+        row.className = "row";
+        for (let j = 0; j < 3; j++) {
+            let cell = document.createElement("div")
+            cell.className = "cell";
+            // cell.innerHTML = "X";
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.addEventListener("click", markCell)
+            cell.innerHTML = gameBoard[i][j];
+            row.appendChild(cell);
+        }
+        game.appendChild(row);
+    }
+
+};
+
+function markCell(event) {
+
+    const row = event.target.dataset.row;
+    const col = event.target.dataset.col;
+
+    // check if cell is empty or marked
+    if (gameBoard[row][col] !== "A") {
+        return;
+    }
+
+    gameBoard[row][col] = currentPlayer;
+    event.target.innerHTML = currentPlayer;
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    console.log(gameBoard);
+    checkWin();
+    checkDraw();
+
+};
+
+
+
+
 // Start the game
-GameController.startGame();
+
+renderGame();
+// GameController.startGame();
+
+/* Write a function that will render the contents of the gameboard array to the webpage
+    (for now, you can always just fill the gameboard array with "X"s and "O"s just to see what’s going on).
+Write the functions that allow players to add marks to a specific spot on the board by interacting with the appropriate DOM elements
+    (e.g.letting players click on a board square to place their marker). */
 
 /* 
 Use module patterns and factory functions to avoid global code
